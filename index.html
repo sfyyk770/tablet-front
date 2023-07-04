@@ -131,7 +131,9 @@
         transition: opacity 1s ease-in-out;
         opacity: 0;
       }
-      
+      .smaller {
+        font-size: 3rem;
+      }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- <script src="https://3478-77-137-77-221.ngrok-free.app/socket.io/socket.io.js"></script> -->
@@ -186,6 +188,7 @@
         document.getElementById('name').innerText = finalObj.name
         document.getElementById('right').innerText = finalObj.category
         document.getElementById('left').innerText = finalObj.description
+        if (finalObj.name.length > 80) $('.name').addClass('smaller');
       };
 
     function getUrlParameter(parameter) {
