@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>Live Control</title>
+    <style>
+        html { 
+            direction: rtl;
+        }
+        #idea-text {
+            font-size: 5rem;
+        }
+        .form-select {
+            float: right;
+            margin-bottom: 2rem;
+        }
+        .lead {
+            text-align: right;
+        }
+    </style>
+  </head>
+  <body class="bg-dark text-white">
+
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-6">
+          <h1 class="text-center mb-3">
+            שליטה בזמן אמת
+          </h1>
+          <form id="form">
+            <div class="form-group">
+              <select id="idea-text" class="form-select multiple" size="2" required>
+                <option value="OFF" selected>מכובה</option>
+                <option value="PUBLISH">מפורסם</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              עדכן
+            </button>
+          </form>
+        </div>
+        
+        <div class="col-md-6">
+          <div id="ideas">
+            <div class="card bg-secondary my-3">
+                <div class="card-body">
+                  <p class="lead">
+                    סטטוס: <strong id="control"></strong>
+                  </p>
+                </div>
+              </div>
+          </div>
+
+          <div onclick="sendRefresh()"class="btn btn-primary btn-block">
+            רענון נתונים
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/@feathersjs/client@^4.3.0/dist/feathers.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js" crossorigin="anonymous"></script>
+
+    <script>
+      // Socket.io setup
+      const socket = io('http://localhost:3030');
+
+      // Init feathers app
+      const app = feathers();
+
+      // Register socket.io to talk to server
+      app.configure(feathers.socketio(socket));
+
+      document.getElementById('form').addEventListener('submit', sendIdea);
+
+      async function sendIdea(e) {
+        e.preventDefault();
+
+        const text = document.getElementById('idea-text');
+
+        // Create new idea
+        app.service('control').create({
+          status: text.value,
+        });
+
+        // Clear inputs
+        text.value = '';
+      }
+
+      function renderIdea(idea) {
+          console.log(idea);
+        document.getElementById(
+          'control'
+        ).innerText = idea;
+      }
+
+      async function init() {
+        // Find ideas
+        const ideas = await app.service('control').find();
+        renderIdea(ideas)
+
+        // Add idea in realtime
+        app.service('control').on('created', renderIdea);
+      }
+
+      init();
+
+        function sendRefresh() {
+            app.service('control').create({
+                status: "REFRESH",
+            });
+        }
+        function sendRefreshMAster() {
+            app.service('control').create({
+                status: "FULL_REFRESH",
+            });
+        }
+    </script>
+  </body>
+</html>

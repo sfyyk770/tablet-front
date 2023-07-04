@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>A FeathersJS application</title>
+    <meta name="description" content="A FeathersJS server">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html, body {
+        direction: rtl;
+        font-family: 'FbSpoiler', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif';
+        font-weight: 400;
+        font-size: 16px;
+        color: #fff;
+      }
+
+      @font-face {
+        font-family: "FbSpoiler";
+        src: url("FbSpoiler-Light.otf") format("opentype"),
+            url("FbSpoiler-Regular.otf") format("opentype");
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      .center-text {
+        text-align: center;
+      }
+
+      main {
+        margin-top: 100px;
+        padding: 20px;
+      }
+
+      img.logo {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        font-size: 2em;
+        font-weight: 100;
+      }
+
+      footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 20px;
+      }
+
+      footer p {
+        font-weight: 300;
+        font-size: 1.0em;
+      }
+
+      a {
+        color: #3cf;
+        text-decoration: none;
+      }
+
+      a:hover,
+      a:focus {
+        color: #3cf;
+      }
+      .flex {
+        display: flex;
+        /* gap: 10px; */
+        justify-content: center;
+      }
+      .container {
+        position: fixed;
+      }
+      .image-container {
+        position: relative;
+      }
+      .overlay-image {
+        /* position: absolute; */
+        top: 0;
+        left: 0;
+        opacity: 0;
+        width: 100%;
+        z-index: 99999 !important;
+        /* height: 3400px; */
+      }
+      .name {
+        font-weight: revert;
+        line-height: 0.75;
+        margin-top: 21rem;
+        font-size: 4rem;
+        padding: 0 4rem;
+        color: #ddc15e;
+      }
+      #right, #left {
+        padding: 0 8%;
+        text-align: center;
+      }
+      .bg {
+        /* The image used */
+        background-image: url("img_girl.jpg");
+        position: fixed;
+        /* Full height */
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+
+        /* Center and scale the image nicely */
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        z-index: -6;
+      }
+      .overlay-image {
+        transition: opacity 1s ease-in-out;
+        opacity: 0;
+      }
+      
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- <script src="https://3478-77-137-77-221.ngrok-free.app/socket.io/socket.io.js"></script> -->
+    <script src="https://unpkg.com/@feathersjs/client@^4.3.0/dist/feathers.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
+    <script>
+      var windowWidth = $(window).width();
+      var windowHeight = $(window).height()+200;
+
+      // Socket.io setup
+      const socket = io('http://localhost:3030');
+
+      // Init feathers app
+      const app = feathers();
+
+      // Register socket.io to talk to server
+      app.configure(feathers.socketio(socket));
+
+      function renderIdea(control) {
+          if (control === 'OFF') {
+            $('.overlay-image').css({
+              'opacity': 1
+            });
+          } else if (control === 'PUBLISH') {
+            $('.overlay-image').css({
+              'opacity': 0
+            });
+          } else if (control === 'REFRESH') {
+            fetchData();
+          }
+      }
+
+      async function init() {
+        // Find ideas
+        const ideas = await app.service('control').find();
+        renderIdea(ideas)
+
+        // Add idea in realtime
+        app.service('control').on('created', renderIdea);
+        fetchData();
+      }
+
+      init();
+
+      const fetchData = async () => {
+        const table = getUrlParameter("table");
+        const response = await fetch("http://localhost:3030/api/guests?table="+table);
+        const data = await response.json();
+        const finalObj = data.data[0];
+        console.log(finalObj);
+        document.getElementById('name').innerText = finalObj.name
+        document.getElementById('right').innerText = finalObj.category
+        document.getElementById('left').innerText = finalObj.description
+      };
+
+    function getUrlParameter(parameter) {
+      const url = window.location.search;
+      const queryString = url.substring(1);
+      const urlParams = new URLSearchParams(queryString);
+
+      return urlParams.get(parameter);
+    }
+
+    $('.bg').css({
+			'width': windowWidth,
+			'height': windowHeight
+    });
+    
+    function enterFullscreen() {
+      // Check if the browser supports fullscreen
+      if (document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled || document.msFullscreenEnabled) {
+        // Enter fullscreen mode
+        document.documentElement.requestFullscreen();
+      }
+    }
+    $("html").click(function (){
+						enterFullscreen();
+    });
+  </script>
+  </head>
+  <body>
+    <img id="conn" class="bg" src="bg-ezer.jpg">
+    <img class="bg overlay-image" src="bg-ezer-main.jpg">
+    <main class="container">
+
+      <div class="name"><h2 id="name" class="center-text name">תת תת כותרת</h2></div>
+      <div class="flex" style="font-size: 1.5rem; margin-top: 1rem;">
+        <h2 id="right">כותרת</h2>
+        <h2 id="left">תת כותרת</h2>
+      </div>
+    </main>
+  </body>
+</html>
