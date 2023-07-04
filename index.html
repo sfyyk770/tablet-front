@@ -21,10 +21,15 @@
 
       @font-face {
         font-family: "FbSpoiler";
-        src: url("FbSpoiler-Light.otf") format("opentype"),
-            url("FbSpoiler-Regular.otf") format("opentype");
+        src: url("FbSpoiler-Regular.otf") format("opentype");
         font-weight: 400;
         font-style: normal;
+      }
+      @font-face {
+        font-family: "FbSpoilerBold";
+        src: url("FbSpoiler-Bold.otf") format("opentype");
+        font-weight: bold;
+        font-style: bold;
       }
 
       .center-text {
@@ -45,7 +50,7 @@
 
       h2 {
         font-size: 2em;
-        font-weight: 100;
+        font-weight: bold;
       }
 
       footer {
@@ -91,13 +96,14 @@
         /* height: 3400px; */
       }
       .name {
-        font-weight: revert;
+        /* font-weight: revert; */
         line-height: 0.75;
         margin-top: 33rem;
         font-size: 4rem;
         padding: 0 2rem;
         color: #ddc15e;
         min-height: 180px;
+        font-family: 'FbSpoilerBold';
       }
       #right, #left {
         padding: 0 8%;
