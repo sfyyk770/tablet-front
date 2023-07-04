@@ -134,7 +134,7 @@
       var windowHeight = $(window).height()+200;
 
       // Socket.io setup
-      const socket = io('http://localhost:3030');
+      const socket = io('https://tablet-monitor-backend-mznkby6ega-oa.a.run.app');
 
       // Init feathers app
       const app = feathers();
@@ -170,7 +170,7 @@
 
       const fetchData = async () => {
         const table = getUrlParameter("table");
-        const response = await fetch("http://localhost:3030/api/guests?table="+table);
+        const response = await fetch("https://tablet-monitor-backend-mznkby6ega-oa.a.run.app/api/guests?table="+table);
         const data = await response.json();
         const finalObj = data.data[0];
         console.log(finalObj);
