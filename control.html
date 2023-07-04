@@ -72,7 +72,10 @@
 
     <script>
       // Socket.io setup
-      const socket = io('https://tablet-monitor-backend-mznkby6ega-oa.a.run.app');
+      const socket = io('https://tablet-monitor-backend-mznkby6ega-oa.a.run.app', {
+        transports: ['websocket'],
+        upgrade: false
+      });
 
       // Init feathers app
       const app = feathers();
