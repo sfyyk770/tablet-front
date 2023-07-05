@@ -146,7 +146,7 @@
       var windowHeight = $(window).height()+200;
 
       // Socket.io setup
-      const socket = io('https://0978-5-28-177-167.ngrok-free.app', {
+      const socket = io('https://tablet-monitor-backend-mznkby6ega-oa.a.run.app', {
         transports: ['websocket'],
         upgrade: false
       });
@@ -185,7 +185,7 @@
 
       const fetchData = async () => {
         const table = getUrlParameter("t");
-        const response = await fetch("https://0978-5-28-177-167.ngrok-free.app/api/guests?table="+table);
+        const response = await fetch("https://tablet-monitor-backend-mznkby6ega-oa.a.run.app/api/guests?table="+table);
         const data = await response.json();
         const finalObj = data.data[0];
         console.log(finalObj);
